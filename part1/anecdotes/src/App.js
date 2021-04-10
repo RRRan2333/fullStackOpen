@@ -25,11 +25,13 @@ const App = () => {
     setVote(newVotes)
   }
 
+  let indexMostPopular = votes.indexOf(Math.max(...votes))
   console.log(selected)
   console.log(votes)
 
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <h4>{anecdotes[selected]}</h4>
       <h4>has {votes[selected]} votes</h4>
       <button onClick={() => addOneVote(votes, selected)}>
@@ -38,6 +40,9 @@ const App = () => {
       <button onClick={()=>setSelected(Math.floor(Math.random()*(anecdotes.length)))}>
         next anecdote
       </button>
+      <h1>Anecdote with most votes</h1>
+      <h4>{anecdotes[indexMostPopular]}</h4>
+      <h4>has {votes[indexMostPopular]} votes</h4>
     </div>
   )
 }
