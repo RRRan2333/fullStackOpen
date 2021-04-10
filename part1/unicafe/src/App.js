@@ -26,10 +26,14 @@ const App = () => {
       <Button handleClick={upvoteGood} text='good'/>
       <Button handleClick={upvoteNeutral} text='neurtral'/>
       <Button handleClick={upvoteBad} text='bad'/>
+      
       <h1>statistics</h1>
       <Statistics text='good' value={good}/>
       <Statistics text='neutral' value={neutral}/>
       <Statistics text='bad' value={bad}/>
+      <Statistics text='all' value={bad+neutral+good}/>
+      <Statistics text='average' value={(good-bad)/(good+neutral+bad)}/>
+      <Statistics text='positive' value={good/(good+neutral+bad)}/>
     </div>
   )
 }
