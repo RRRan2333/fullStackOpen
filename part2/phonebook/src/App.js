@@ -12,14 +12,18 @@ const App = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    const nameObject = {
-      name: newName,
-      // date: new Date().toISOString(),
-      // important: Math.random() > 0.5,
-      // id: notes.length + 1,
+    if (!persons.map(person => person.name).includes(newName)) {
+      const nameObject = {
+        name: newName,
+        // date: new Date().toISOString(),
+        // important: Math.random() > 0.5,
+        // id: notes.length + 1,
+    }
+    setPersons(persons.concat(nameObject))
+    setNewName('')
+  } else {
+    alert(`${newName} is already added to phonebook`)
   }
-  setPersons(persons.concat(nameObject))
-  setNewName('')
 }
 
   return (
