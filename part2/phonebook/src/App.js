@@ -1,13 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+
 
 const DisplayPersons = ({searchName, persons}) => (searchName === '') ?
     <ul>
-      {persons.map(person => <li key={person.name}>{person.name}, {person.number}</li>)}
+      {persons.map(person => <li key={person.id}>{person.name}, {person.number}</li>)}
     </ul>
     : 
     <ul>
       {persons.filter(person => person.name.toUpperCase().includes(searchName.toUpperCase()))
-                .map(person => <li key={person.name}>{person.name}, {person.number}</li>)}
+                .map(person => <li key={person.id}>{person.name}, {person.number}</li>)}
     </ul>
 
 
@@ -35,18 +37,21 @@ const Form = ({handleSubmit, newName, newNumber,handleNameChange, handleNumberCh
 
 
 const App = () => {
-  const [ persons, setPersons ] = useState([
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Ada Lovelace', number: '39-44-5323523' },
-    { name: 'Dan Abramov', number: '12-43-234345' },
-    { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ])
-  
+  const [ persons, setPersons ] = useState([''])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ searchName, setSearchName ] = useState('')
-  // const [ showAll, setShowAll ] = useState(true)
 
+
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        setPersons(response.data)
+      })
+  }, [])
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
