@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
 
 
 const DisplayPersons = ({searchName, persons}) => (searchName === '') ?
@@ -9,7 +9,7 @@ const DisplayPersons = ({searchName, persons}) => (searchName === '') ?
     : 
     <ul>
       {persons.filter(person => person.name.toUpperCase().includes(searchName.toUpperCase()))
-                .map(person => <li key={person.id}>{person.name}, {person.number}</li>)}
+        .map(person => <li key={person.id}>{person.name}, {person.number}</li>)}
     </ul>
 
 
@@ -24,7 +24,7 @@ const Filter = ({searchName, handleSearchChange}) => {
 const Form = ({handleSubmit, newName, newNumber,handleNameChange, handleNumberChange}) => {
   return (
     <form onSubmit={handleSubmit}>
-      <div> debug: {newName}, {newNumber}</div>
+      {/* <div> debug: {newName}, {newNumber}</div> */}
       <div> name: <input value={newName} onChange={handleNameChange}/></div>
       <div> number: <input value={newNumber} onChange={handleNumberChange}/>
       </div>
@@ -45,12 +45,18 @@ const App = () => {
 
   useEffect(() => {
     console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
         console.log('promise fulfilled')
-        setPersons(response.data)
       })
+    // axios
+    //   .get('http://localhost:3001/persons')
+    //   .then(response => {
+    //     console.log('promise fulfilled')
+    //     setPersons(response.data)
+    //   })
   }, [])
 
   const handleNameChange = (event) => {
@@ -66,17 +72,29 @@ const App = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    if (!persons.map(person => person.name).includes(newName)) {
-      const nameObject = {
-        name: newName,
-        number: newNumber
-      }
-    setPersons(persons.concat(nameObject))
-    setNewName('')
-    setNewNumber('')
-    } else {
-    alert(`${newName} is already added to phonebook`)
+    const personObject = {
+      name: newName,
+      number: newNumber
     }
+
+    personService
+      .create(personObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+        setNewName('')
+        setNewNumber('')
+      })
+    // if (!persons.map(person => person.name).includes(newName)) {
+    //   const nameObject = {
+    //     name: newName,
+    //     number: newNumber
+    //   }
+    // setPersons(persons.concat(nameObject))
+    // setNewName('')
+    // setNewNumber('')
+    // } else {
+    // alert(`${newName} is already added to phonebook`)
+    // }
   }
 
   return (
