@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
-const CountryDetail = ({match}) => <>
+const CountryDetail = ({match, weather, setWeather}) => <>
   <h1>{match.name}</h1>
   <p>capital {match.capital}</p>
   <p>population {match.population}</p>
@@ -9,11 +9,11 @@ const CountryDetail = ({match}) => <>
   <ul>
     {match.languages.map(lang => <li key={lang.iso639_2}>{lang.name}</li>)}
   </ul>
-  <img src={match.flag} style={{width: 250}} />
-
+  <img src={match.flag} style={{width: 250}} alt="something?"/>
+  <CapitalWeather match={match} weather={weather} setWeather={setWeather}/>
 </>
 
-const DisplayResults = ({searchCountry, handleShow, countries, }) => {
+const DisplayResults = ({searchCountry, handleShow, countries, weather, setWeather}) => {
   if (searchCountry !== '') {
     const filteredCountries = countries.filter(country => country.name.toLowerCase().includes(searchCountry.toLowerCase()))
     
@@ -28,7 +28,8 @@ const DisplayResults = ({searchCountry, handleShow, countries, }) => {
           </p>)
       )
     } else if (filteredCountries.length === 1) {
-      return <CountryDetail match={filteredCountries[0]}/>
+      return <CountryDetail match={filteredCountries[0]} 
+        weather={weather} setWeather={setWeather}/>
     } else {
       return <p>no match found</p>
     }
@@ -37,9 +38,42 @@ const DisplayResults = ({searchCountry, handleShow, countries, }) => {
   }
 }
 
+const CapitalWeather = ({match, weather, setWeather}) => {
+  const api_key = process.env.REACT_APP_API_KEY
+  useEffect(() => {
+    console.log('weather effect')
+    console.log(match.capital)
+    const params = {
+      access_key: api_key,
+      query: match.capital
+    }
+    console.log(params)
+    axios
+      .get('http://api.weatherstack.com/current', {params})
+      .then(response => {
+        console.log('weather promise fulfilled')
+        console.log("var weather: ", weather)
+        console.log("API temp: ", response.data.current.temperature)
+        setWeather(response.data.current.temperature)
+        console.log("var weather: ", weather)
+      })
+  }, [])
+
+  return (
+    <>
+      <h2>Weather in {match.capital}</h2>
+      <h4>temperature: {weather}</h4>
+      {/* <img src={response.data.current.weather_icons} 
+      style={{width: 50}} alt="weather icon"/>
+       */}
+    </>
+  )
+}
+
 const App = () => {
   const [ searchCountry, setSearchCountry ] = useState('')
   const [ countries, setCountries ] = useState([])
+  const [ weather, setWeather ] = useState(99)
 
   const handleSearchChange = (event) => {
     setSearchCountry(event.target.value)
@@ -50,16 +84,15 @@ const App = () => {
   }
 
   useEffect(() => {
-    console.log('effect')
+    console.log('country effect')
     axios
       .get('https://restcountries.eu/rest/v2/all')
       .then(response => {
-        console.log('promise fulfilled')
+        console.log('country promise fulfilled')
         console.log(response.data)
         setCountries(response.data)
       })
   }, [])
-
 
   return (
     <div>
@@ -67,7 +100,8 @@ const App = () => {
       <h4>find countries 
         <input value={searchCountry} onChange={handleSearchChange}/>
       </h4>
-      <DisplayResults searchCountry={searchCountry} handleShow={handleShow} countries={countries}/>
+      <DisplayResults searchCountry={searchCountry} handleShow={handleShow} countries={countries} 
+      weather={weather} setWeather={setWeather}/>
     </div>
   )
 }
