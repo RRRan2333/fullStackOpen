@@ -2,16 +2,23 @@ import React, { useState, useEffect } from 'react'
 import personService from './services/persons'
 
 
-const DisplayPersons = ({searchName, persons}) => (searchName === '') ?
+const DisplayPersons = ({searchName, persons, deletePerson}) => (searchName === '') ?
     <ul>
-      {persons.map(person => <li key={person.id}>{person.name}, {person.number}</li>)}
+      {persons.map(person => <li key={person.id}>{person.name}, {person.number} <DeleteButton deletePerson={deletePerson} id={person.id}/></li>)}
     </ul>
     : 
     <ul>
       {persons.filter(person => person.name.toUpperCase().includes(searchName.toUpperCase()))
-        .map(person => <li key={person.id}>{person.name}, {person.number}</li>)}
+        .map(person => <li key={person.id}>{person.name}, {person.number} <DeleteButton deletePerson={deletePerson} id={person.id}/></li>)}
     </ul>
 
+const DeleteButton = ({deletePerson, id}) => {
+  return (
+    <button onClick={() => deletePerson(id)}>
+      delete
+    </button>
+  )
+}
 
 const Filter = ({searchName, handleSearchChange}) => {
   return (
@@ -44,12 +51,12 @@ const App = () => {
 
 
   useEffect(() => {
-    console.log('effect')
+    // console.log('effect')
     personService
       .getAll()
       .then(initialPersons => {
         setPersons(initialPersons)
-        console.log('promise fulfilled')
+        console.log('initial promise fulfilled')
       })
     // axios
     //   .get('http://localhost:3001/persons')
@@ -68,6 +75,21 @@ const App = () => {
 
   const handleSearchChange = (event) => {
     setSearchName(event.target.value)
+  }
+
+  const deletePerson = (id) => {
+    console.log(`deletePerson function triggered in App component`)
+    console.log(id)
+    const personNameToBeDeleted = persons.find(person => person.id === id).name
+
+    if(window.confirm(`Delete ${personNameToBeDeleted}?`)) {    
+      personService
+        .remove(id)
+        .then(returned =>{
+          console.log(returned)
+          setPersons(persons.filter(note => note.id !== id))
+        })
+    }
   }
 
   const handleSubmit = (event) => {
@@ -104,17 +126,8 @@ const App = () => {
       <h2>add new entries</h2>
       <Form handleSubmit={handleSubmit} newName={newName} newNumber={newNumber} 
       handleNameChange={handleNameChange} handleNumberChange={handleNumberChange}/>
-      {/* <form onSubmit={handleSubmit}>
-        <div>debug: {newName}, {newNumber}</div>
-        <div> name: <input value={newName} onChange={handleNameChange}/> </div>
-        <div> number: <input value={newNumber} onChange={handleNumberChange}/>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form> */}
       <h2>Numbers</h2>
-      <DisplayPersons searchName={searchName} persons={persons}/>
+      <DisplayPersons searchName={searchName} persons={persons} deletePerson={deletePerson}/>
     </div>
   )
 }
