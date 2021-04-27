@@ -144,6 +144,9 @@ const App = () => {
             setMessage(null)
           }, 3000)
         })
+        .catch(error => {
+          setMessage(`Information of ${matchedPerson.name} has already been removed from server`)
+        })
     }
     // if (!persons.map(person => person.name).includes(newName)) {
     //   const nameObject = {
