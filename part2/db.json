@@ -10,7 +10,7 @@
       "id": 2,
       "content": "Browser can execute only JavaScript",
       "date": "2019-05-30T18:39:34.091Z",
-      "important": false
+      "important": true
     },
     {
       "id": 3,
@@ -21,8 +21,26 @@
     {
       "content": "Test",
       "date": "2021-04-14T18:34:43.897Z",
-      "important": true,
+      "important": false,
       "id": 4
+    },
+    {
+      "content": "Testings",
+      "date": "2021-04-27T15:03:00.976Z",
+      "important": true,
+      "id": 5
+    },
+    {
+      "content": "Testings",
+      "date": "2021-04-27T15:03:09.257Z",
+      "important": true,
+      "id": 6
+    },
+    {
+      "content": "Test",
+      "date": "2021-04-27T15:03:18.234Z",
+      "important": true,
+      "id": 7
     }
   ]
 }

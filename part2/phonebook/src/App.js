@@ -42,12 +42,24 @@ const Form = ({handleSubmit, newName, newNumber,handleNameChange, handleNumberCh
   )
 }
 
+const Notification = ({message}) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className="msg">
+      {message}
+    </div>
+  )
+}
 
 const App = () => {
   const [ persons, setPersons ] = useState([''])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ searchName, setSearchName ] = useState('')
+  const [ message, setMessage ] = useState(null)
 
 
   useEffect(() => {
@@ -88,6 +100,10 @@ const App = () => {
         .then(returned =>{
           console.log(returned)
           setPersons(persons.filter(note => note.id !== id))
+          setMessage(`${matchedPersonName} successfully deleted`)
+          setTimeout(() => {
+            setMessage(null)
+          }, 3000)
         })
     }
   }
@@ -109,6 +125,10 @@ const App = () => {
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
+          setMessage(`${returnedPerson.name} successfully added`)
+          setTimeout(() => {
+            setMessage(null)
+          }, 3000)
         })
     } else if (window.confirm(`${newName} is already added. Replace old number with new one?`)) {
       // const person = persons.find(p => p.name === newName)
@@ -119,6 +139,10 @@ const App = () => {
           setPersons(persons.map(p => p.name !== newName ? p : returnedPerson))
           setNewName('')
           setNewNumber('')
+          setMessage(`${returnedPerson.name} number changed to ${newNumber}`)
+          setTimeout(() => {
+            setMessage(null)
+          }, 3000)
         })
     }
     // if (!persons.map(person => person.name).includes(newName)) {
@@ -137,6 +161,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message}/>
       <Filter searchName={searchName} handleSearchChange={handleSearchChange}/>
       <h2>add new entries</h2>
       <Form handleSubmit={handleSubmit} newName={newName} newNumber={newNumber} 
