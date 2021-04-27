@@ -80,9 +80,9 @@ const App = () => {
   const deletePerson = (id) => {
     console.log(`deletePerson function triggered in App component`)
     console.log(id)
-    const personNameToBeDeleted = persons.find(person => person.id === id).name
+    const matchedPersonName = persons.find(person => person.id === id).name
 
-    if(window.confirm(`Delete ${personNameToBeDeleted}?`)) {    
+    if(window.confirm(`Delete ${matchedPersonName}?`)) {    
       personService
         .remove(id)
         .then(returned =>{
@@ -94,18 +94,33 @@ const App = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault()
+    
+    const matchedPerson = persons.find(p => p.name === newName)
+    
     const personObject = {
       name: newName,
       number: newNumber
     }
 
-    personService
-      .create(personObject)
-      .then(returnedPerson => {
-        setPersons(persons.concat(returnedPerson))
-        setNewName('')
-        setNewNumber('')
-      })
+    if (!matchedPerson){
+      personService
+        .create(personObject)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
+    } else if (window.confirm(`${newName} is already added. Replace old number with new one?`)) {
+      // const person = persons.find(p => p.name === newName)
+      // const changedPerson = {...person, number: newNumber}
+      personService
+        .update(matchedPerson.id, personObject)
+        .then(returnedPerson => {
+          setPersons(persons.map(p => p.name !== newName ? p : returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
+    }
     // if (!persons.map(person => person.name).includes(newName)) {
     //   const nameObject = {
     //     name: newName,
