@@ -132,7 +132,7 @@ const App = () => {
         })
         .catch(error =>{
           console.log(error.response.data)
-          setMessage(`Validation failed: ${JSON.stringify(error.response.data)}`)
+          setMessage(`Validation failed 1: ${JSON.stringify(error.response.data)}`)
         })
     } else if (window.confirm(`${newName} is already added. Replace old number with new one?`)) {
       // const person = persons.find(p => p.name === newName)
@@ -150,7 +150,7 @@ const App = () => {
         })
         .catch(error => {
           if (error.response.status === 400) {
-            setMessage(`Validation failed: ${JSON.stringify(error.response.data)}`)
+            setMessage(`Validation failed 2: ${JSON.stringify(error.response.data)}`)
           } else {
             setMessage(`Information of ${matchedPerson.name} has already been removed from server`)
           }
